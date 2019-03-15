@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Profilin5 #4 – JavaScript performance workshops</title>
+	<title>Profilin5 layout trashing – JavaScript performance workshops</title>
 
 	<style>
 		span {
@@ -13,7 +13,7 @@
 	</style>
 </head>
 <body>
-	<h1>Profiling #5 – JavaScript performance workshops</h1>
+	<h1>Profiling layout trashing – JavaScript performance workshops</h1>
 
 	<p><button id="start">start!</button></p>
 	<p><button id="stop">stop!</button></p>
@@ -23,7 +23,7 @@
 	<script>
 
 {
-	const NODE_COUNT = 100;
+	const NODE_COUNT = 200;
 	const container = document.getElementById( 'container' );
 
 	const nodes = Array( NODE_COUNT ).fill().map( () => {
@@ -49,18 +49,20 @@
 
   			const progress = timestamp - start;
 
-			// nodes.forEach( ( node, i ) => {
-			// 	node.style.width = node.clientWidth + 10 * Math.sin(  i / 100 + progress / 100 ) + 'px';
-			// } );
-
+  			// 1st
 			nodes.forEach( ( node, i ) => {
-				const oldWidth = nodeWidths[ i ];
-				const newWidth = oldWidth + 10 * Math.sin(  i / 100 + progress / 100 );
-
-				node.style.width = newWidth + 'px';
-
-				nodeWidths[ i ] = newWidth;
+				node.style.width = node.clientWidth + 10 * Math.sin(  i / 100 + progress / 100 ) + 'px';
 			} );
+
+			// 2nd
+			// nodes.forEach( ( node, i ) => {
+			// 	const oldWidth = nodeWidths[ i ];
+			// 	const newWidth = oldWidth + 10 * Math.sin(  i / 100 + progress / 100 );
+
+			// 	node.style.width = newWidth + 'px';
+
+			// 	nodeWidths[ i ] = newWidth;
+			// } );
 
 			animation = requestAnimationFrame( update );
 		} );
