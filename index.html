@@ -1,13 +1,13 @@
 <!doctype html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>JavaScript runtime performance – WarsawJS Workshop #30</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/white.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -20,12 +20,478 @@
 			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
+
+		<style>
+			.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+				/* People should go to jail for changing this */
+				text-transform: initial;
+			}
+
+			.reveal h1 {
+				font-size: 2em;
+			}
+
+			.reveal h2 {
+				font-size: 1.3em;
+			}
+
+			.show-notes-inline .reveal aside.notes {
+				font-size: 50%;
+				display: block;
+				position: fixed;
+				bottom: 0;
+				left: 15%;
+				width: 70%;
+				background: rgba( 255, 255, 255, 0.95 );
+				font-style: italic;
+				padding: 1em;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+
+<section>
+	<h1>Intro</h1>
+	<p>My face</p>
+	<p>Piotrek Koszuliński</p>
+	<p><a href="https://twitter.com/reinmarpl">@reinmarpl</a></p>
+</section>
+
+<section>
+	<h1>Good morning, everyone!<br>👋</h1>
+
+	<aside class="notes">
+		<ul>
+			<li>Jestem Piotrek... pracuję jako, pierwsze 5 lat kariery to FE, od 7 lat tylko JS, z czego od 4 niezbyt dużo kodowania.</li>
+			<li>Kilka słów o sobie (doświadczenie?, frontend/JS?, oczekiwania?)</li>
+			<li>Framework vs vanilla JS?</li>
+			<li>Dotychczasowe problemy z wydajnością?</li>
+			<li>Wiedza o narzędziach, GC, memory leakach, renderowaniu, etc.?</li>
+			<li>Czy myślicie o wydajności pisząc kod?</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Agenda</h1>
+
+	<ol>
+		<li>When?</li>
+		<li>What?</li>
+		<li>How?</li>
+		<li>Memory leaks</li>
+		<li>
+			JavaScript performance
+			<ol>
+				<li>Know your enemy</li>
+				<li>Common issues</li>
+				<li>Common techniques</li>
+			</ol>
+		</li>
+		<li>Let's fix Toby!</li>
+	</ol>
+
+	<aside class="notes">
+		<ul>
+			<li>some theory first</li>
+			<li>in both cases, I'll first showcase the tools and then you'll play with them</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Runtime performance</h1>
+
+	<ul>
+		<li class="fragment">Run<span style="background: rgba(255,50,50,0.4); display:inline-block; width:1ex">&nbsp;</span>time vs load time</li>
+		<li class="fragment">Common aspects</li>
+		<li class="fragment">Animations / gamedev</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>runtime vs load time</li>
+			<li>load time – initial UX, engagement, conversion, inclusiveness, SEO, etc.</li>
+			<li>load time – more about FE, assets, network, caching, etc.</li>
+			<li>there are common things between RT and LT perf</li>
+			<li>Animations / gamedev are about rendering – not my speciality</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Stop me at any time! 🔇</h1>
+
+	<aside class="notes">
+		<ul>
+			<li>ask me questions</li>
+			<li>fix my mistakes</li>
+			<li>ask me to slow down</li>
+			<li>sorry for literally zero pictures (one, if we include my face), I used all my time on Toby</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Load time performance</h1>
+
+	<ul>
+		<li><a href="https://developers.google.com/web/fundamentals/performance/user-centric-performance-metrics#user-centric_performance_metrics">User-centric performance metrics</a></li>
+		<li>First paint, First contentful paint, first meaningful pain, time to interactive, <a href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/analyzing-crp">Critical rendering path</a></li>
+		<li>Network optimization (HTTP2, minification)</li>
+		<li>PWA, AMP, etc.</li>
+		<li>and a lot more...</li>
+
+	<aside class="notes">
+		<ul>
+			<li>quickly about it...</li>
+		</ul>
+	</aside>
+</section>
+
+
+<section>
+	<h1>Runtime performance</h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1><em>When</em> do we optimize?</h1>
+
+	<h2 class="fragment">When it matters</h2>
+
+	<aside class="notes">
+		<ul>
+			<li>when do we think about performance?</li>
+			<li>when there's a problem</li>
+			<li>should be quite obvious, but...</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Premature optimization is the root of all evil</h1>
+
+	<aside class="notes">
+		<ul>
+			<li>developers like challenges (and overthink stuff)</li>
+			<li>complexity</li>
+			<li>bugs</li>
+			<li>your time – (the most?) precious resource</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1><em>When</em> does performance matter?</h1>
+
+	<h2 class="fragment">When the user is really affected</h2>
+
+	<p class="fragment">on their device</p>
+	<p class="fragment">with their data</p>
+
+	<aside class="notes">
+		<ul>
+			<li>so when we have a problem?</li>
+			<li>when the user sees/feels it</li>
+			<li>UX, responsiveness, smooth exp</li>
+			<li>be realistic! user's network/device/amount of data</li>
+			<li>see through your user's eyes</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1><em>When</em> do we think about performance?</h1>
+
+	<ul>
+		<li class="fragment">when we have problems</li>
+		<li class="fragment">when we <strong>know</strong> we will have problems</li>
+		<li class="fragment">when we make architecture decisions</li>
+		<li class="fragment">at all other times</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>improving existing issues</li>
+			<li>critical code, complex apps, loads of data</li>
+			<li>architecture == things that are hard to change</li>
+			<li>think != do</li>
+			<li>avoid doing really bad things</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1><em>What</em> do we optimize?</h1>
+
+	<h2 class="fragment">What matters<br><span class="fragment">& what can be improved</span></h2>
+
+	<aside class="notes">
+		<ul>
+			<li>some optimizations won't make a (big) difference</li>
+			<li>and some things cannot be optimized (in finite time)</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1><em>What</em> do we optimize?</h1>
+
+	<ul>
+		<li class="fragment">look for things that <strong>take the longest</strong></li>
+		<li class="fragment">look for things which <strong>block other things</strong></li>
+		<li class="fragment">look for things which <strong>happen too often</strong></li>
+		<li class="fragment">dev tools underline some mistakes</li>
+		<li class="fragment">gut feeling</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>if you cut 50% of a thing which takes 2s, you gain 1s</li>
+			<li>if you cut 50% of a thing which takes 0.2s, you gain 0.1s</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1><em>How</em> <strong>not</strong> to optimize?</h1>
+
+	<ul>
+		<li class="fragment">Micro optimizations</li>
+		<li class="fragment">When it's too risky (no tests? complexity?)</li>
+		<li class="fragment">Again, prematurely</li>
+		<li class="fragment">Again, too early</li>
+		<li class="fragment">Again, when there's no chance</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>no, the type of for loop does not matter</li>
+			<li>ROI and risks – e.g. too complex change may break your system; broken system is worse than slow system</li>
+			<li>when I worked on Toby, I used an example from GDevs just because they use it, turned out it had catastrophic impact on my code</li>
+			<li>cache</li>
+			<li>diff vs fastDiff example</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>So, <em>how</em> do we optimize?</h1>
+
+	<ul>
+		<li>start locally, think broadly, learn the code</li>
+		<li>follow your gut feeling</li>
+		<li>but verify your hypothesis</li>
+		<li>be creative</li>
+		<li>but avoid complexity</li>
+		<li>don't fixate on one thing</li>
+		<li>and know when to stop</li>
+
+	<aside class="notes">
+		<ul>
+			<li>a couple of general remarks before we'll move to the practice session</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1></h1>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
 			</div>
 		</div>
 
@@ -36,14 +502,22 @@
 			// More info about config & dependencies:
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
+			Reveal.initialize( {
+				history: true,
+
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
 					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
 				]
-			});
+			} );
+
+			document.body.addEventListener( 'keydown', ( evt ) => {
+				if ( evt.key == 'q' ) {
+					document.body.classList.toggle( 'show-notes-inline' );
+				}
+			} );
 		</script>
 	</body>
 </html>
