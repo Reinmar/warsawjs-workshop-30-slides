@@ -18,7 +18,7 @@
 			link.rel = 'stylesheet';
 			link.type = 'text/css';
 			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
+			document.getElementsByTagName( 'head' )[ 0 ].appendChild( link );
 		</script>
 
 		<style>
@@ -50,17 +50,43 @@
 			code {
 				tab-size: 4;
 			}
+
+			.reveal .intro h1 {
+				font-size: 1em;
+			}
+			.reveal .intro .trainer {
+				padding-bottom: 3em;
+			}
+			.reveal .intro img {
+				border: none;
+				width: 20%;
+				border-radius: 50%;
+			}
+			.reveal .intro .practical-info {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				font-size: 0.5em;
+				text-align: left;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
 
-<section>
-	<h1>Intro</h1>
-	<p>My face</p>
-	<p>Piotrek Koszuliński</p>
-	<p><a href="https://twitter.com/reinmarpl">@reinmarpl</a></p>
+<section class="intro">
+	<h1>Grupa 1.</h1>
+	<p class="trainer">
+		<img src="./images/piotr-koszulinski.jpg" alt="Piotrek Koszuliński's photo"><br>
+		Piotrek Koszuliński<br>
+		<a href="https://twitter.com/reinmarpl">@reinmarpl</a>
+	</p>
+	<p class="practical-info">
+		wifi: ?<br>
+		slack: #workshop-30-1<br>
+		GH: <a href="https://github.com/Reinmar/warsawjs-workshop-30-spreadsheet">github.com/Reinmar/warsawjs-workshop-30-spreadsheet</a>
+	</p>
 </section>
 
 <section>
@@ -68,12 +94,11 @@
 
 	<aside class="notes">
 		<ul>
-			<li>Jestem Piotrek... pracuję jako, pierwsze 5 lat kariery to FE, od 7 lat tylko JS, z czego od 4 niezbyt dużo kodowania.</li>
-			<li>Kilka słów o sobie (doświadczenie?, frontend/JS?, oczekiwania?)</li>
-			<li>Framework vs vanilla JS?</li>
-			<li>Dotychczasowe problemy z wydajnością?</li>
-			<li>Wiedza o narzędziach, GC, memory leakach, renderowaniu, etc.?</li>
-			<li>Czy myślicie o wydajności pisząc kod?</li>
+			<li>CKE project lead, first 5 years FE, then for 7 years only JS, but the last 4 not much coding.</li>
+			<li>tell us a bit about yourself (experience? FE/JS? expectations?)</li>
+			<li>framework vs vanilla JS?</li>
+			<li>experience with profiling apps, memory leaks, GC, rendering, etc.?</li>
+			<li>which of you did know CKE before?</li>
 		</ul>
 	</aside>
 </section>
@@ -86,6 +111,7 @@
 		<li>What?</li>
 		<li>How?</li>
 		<li>Memory leaks</li>
+		<li>Let's fix Toby!</li>
 		<li>
 			Runtime performance
 			<ol>
@@ -94,7 +120,7 @@
 				<li>Common techniques</li>
 			</ol>
 		</li>
-		<li>Let's fix Toby!</li>
+		<li>Let's improve Toby!</li>
 	</ol>
 
 	<aside class="notes">
@@ -569,9 +595,65 @@ class MyApp {
 </section>
 
 <section>
-	<h1>Techniques, issues and mechanisms</h1>
+	<h1>Know your enemy</h1>
 
-	<h2>Memory</h2>
+	<ul>
+		<li>Browser mechanisms</li>
+		<li>Common issues</li>
+		<li>Common techniques</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>the following list is really random</li>
+			<li>just stuff that came to my mind that I think you should know</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>JavaScript</h1>
+
+	<ul style="font-size: 90%">
+		<li>JS is single-threaded (the rest not necessarily)</li>
+		<li>event loop</li>
+		<li><abbr title="Just in Time">JIT</abbr> compilation – avoid deopts</li>
+		<li>Cache / memoization</li>
+		<li>Web Workers</li>
+		<li>RegExp can be super slow (e.g. <a href="https://www.regular-expressions.info/catastrophic.html">catastrophic backtracing</a>, non-capturing groups)</li>
+		<li>You can benchmark your code, but keep it realistic</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li></li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>DOM</h1>
+
+	<ul style="font-size: 90%">
+		<li>Avoid layout trashing</li>
+		<li>Batch DOM changes</li>
+		<li>DocumentFragments</li>
+		<li>Use less elements (keep DOM clean) and listeners (e.g. via event delegation)</li>
+		<li>Recycle elements</li>
+		<li>Clone elements</li>
+		<li>Avoid pitfalls like setting <code>innerHTML</code></li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>https://github.com/wilsonpage/fastdom</li>
+			<li>https://gist.github.com/paulirish/5d52fb081b3570c81e3a</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Memory</h1>
 
 	<ul>
 		<li>Avoid major GC pauses</li>
@@ -587,59 +669,11 @@ class MyApp {
 </section>
 
 <section>
-	<h1>Techniques, issues and mechanisms</h1>
+	<h1>Keep it smooth</h1>
 
-	<h2>JavaScript</h2>
-
-	<ul>
-		<li>JIT (avoid deopts)</li>
-		<li>event loop</li>
-		<li>Web Workers</li>
-		<li>Cache / memoization</li>
-		<li>RegExp can be super slow (e.g. <a href="https://www.regular-expressions.info/catastrophic.html">catastrophic backtracing</a>, non-capturing groups)</li>
-		<li>You can benchmark your code, but keep it realistic</li>
-	</ul>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1>Techniques, issues and mechanisms</h1>
-
-	<h2>DOM</h2>
-
-	<ul>
-		<li>Avoid layout trashing</li>
-		<li>DocumentFragments</li>
-		<li>Batch DOM changes</li>
-		<li>Avoid frequent DOM access</li>
-		<li>Use less elements (keep DOM clean) and listeners (e.g. via event delegation)</li>
-		<li>Recycle elements</li>
-		<li>Clone elements</li>
-		<li>Avoid pitfalls like setting <code>innerHTML</code></li>
-	</ul>
-
-	<aside class="notes">
-		<ul>
-			<li>https://github.com/wilsonpage/fastdom</li>
-			<li>https://gist.github.com/paulirish/5d52fb081b3570c81e3a</li>
-		</ul>
-	</aside>
-</section>
-
-
-<section>
-	<h1>Techniques, issues and mechanisms</h1>
-
-	<h2>Keep it smooth</h2>
-
-	<ul>
+	<ul style="font-size: 90%">
 		<li>Aim for short sync chunks</li>
-		<li>Reduce paint time – promote changing things to layers</li>
+		<li>Reduce paint time – promote things which change frequently to layers</li>
 		<li>Reduce layer management time (updating layer tree and compositing layers)</li>
 		<li><code>requestAnimationFrame()</code></li>
 		<li>Split long chunks with timeouts or <abbr title="requestAnimationFrame">rAF</abbr></li>
