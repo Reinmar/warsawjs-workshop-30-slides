@@ -10,7 +10,7 @@
 		<link rel="stylesheet" href="css/theme/white.css">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="lib/css/monokai-sublime.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -45,6 +45,10 @@
 				background: rgba( 255, 255, 255, 0.95 );
 				font-style: italic;
 				padding: 1em;
+			}
+
+			code {
+				tab-size: 4;
 			}
 		</style>
 	</head>
@@ -83,7 +87,7 @@
 		<li>How?</li>
 		<li>Memory leaks</li>
 		<li>
-			JavaScript performance
+			Runtime performance
 			<ol>
 				<li>Know your enemy</li>
 				<li>Common issues</li>
@@ -163,13 +167,13 @@
 </section>
 
 <section>
-	<h1><em>When</em> do we optimize?</h1>
+	<h1><em>When</em> should you optimize?</h1>
 
 	<h2 class="fragment">When it matters</h2>
 
 	<aside class="notes">
 		<ul>
-			<li>when do we think about performance?</li>
+			<li>when should you think about performance?</li>
 			<li>when there's a problem</li>
 			<li>should be quite obvious, but...</li>
 		</ul>
@@ -209,7 +213,7 @@
 </section>
 
 <section>
-	<h1><em>When</em> do we think about performance?</h1>
+	<h1><em>When</em> should you think about performance?</h1>
 
 	<ul>
 		<li class="fragment">when we have problems</li>
@@ -230,7 +234,7 @@
 </section>
 
 <section>
-	<h1><em>What</em> do we optimize?</h1>
+	<h1><em>What</em> should you optimize?</h1>
 
 	<h2 class="fragment">What matters<br><span class="fragment">& what can be improved</span></h2>
 
@@ -243,7 +247,7 @@
 </section>
 
 <section>
-	<h1><em>What</em> do we optimize?</h1>
+	<h1><em>What</em> should you optimize?</h1>
 
 	<ul>
 		<li class="fragment">look for things that <strong>take the longest</strong></li>
@@ -284,16 +288,21 @@
 </section>
 
 <section>
-	<h1>So, <em>how</em> do we optimize?</h1>
+	<h1>So, <em>how</em> should you optimize?</h1>
 
-	<ul>
-		<li>start locally, think broadly, learn the code</li>
+	<ul style="font-size: 75%">
+		<li>start locally, think broadly</li>
+		<li>know the code</li>
+		<li>find the root cause</li>
+		<li>avoid noise, keep your env tidy</li>
 		<li>follow your gut feeling</li>
-		<li>but verify your hypothesis</li>
+		<li>but verify your hypothesis (realistically!)</li>
 		<li>be creative</li>
 		<li>but avoid complexity</li>
 		<li>don't fixate on one thing</li>
 		<li>and know when to stop</li>
+		<li>bonus: question self-proclaimed experts</li>
+	</ul>
 
 	<aside class="notes">
 		<ul>
@@ -303,7 +312,53 @@
 </section>
 
 <section>
-	<h1></h1>
+	<h1>Memory leaks</h1>
+
+	<aside class="notes">
+		<ul>
+			<li>let's start from memory leaks because they are (usually) simpler</li>
+			<li>they affect performance too</li>
+			<li>and we'll have a chance to learn a bit about Toby</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Garbage collector</h1>
+
+	<h2><a href="https://blog.sessionstack.com/how-javascript-works-memory-management-how-to-handle-4-common-memory-leaks-3f28b94cfbec#f98a">Mark & sweep algorithm</a></h2>
+
+	<ol>
+		<li class="fragment">
+			Find unreachable objects
+			<small>i.e. objects which cannot be accessed starting from a GC root</small>
+		</li>
+		<li class="fragment">
+			Remove them from the memory
+		</li>
+	</ol>
+
+	<aside class="notes">
+		<ul>
+			<li>note: in the past two object referencing each other were causing issues... should not be a problem any more but I still found this on MDN</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Can we free it?</h1>
+
+	<pre><code class="js">
+{
+	const foo = [];
+
+	document.body.addEventListener( 'click', () => {
+		console.log( 'hello!' );
+	} );
+
+	console.log( foo );
+}
+	</code></pre>
 
 	<aside class="notes">
 		<ul>
@@ -313,7 +368,19 @@
 </section>
 
 <section>
-	<h1></h1>
+	<h1>Can we free it?</h1>
+
+	<pre><code class="js">
+{
+	const foo = [];
+
+	document.body.addEventListener( 'click', () => {
+		console.log( foo );
+	} );
+
+	console.log( foo );
+}
+	</code></pre>
 
 	<aside class="notes">
 		<ul>
@@ -323,7 +390,20 @@
 </section>
 
 <section>
-	<h1></h1>
+	<h1>Can we free it?</h1>
+
+	<pre><code class="js">
+{
+	const foo = [];
+	const span = document.createElement( 'span' );
+
+	span.addEventListener( 'click', () => {
+		console.log( foo );
+	} );
+
+	console.log( foo );
+}
+	</code></pre>
 
 	<aside class="notes">
 		<ul>
@@ -333,7 +413,20 @@
 </section>
 
 <section>
-	<h1></h1>
+	<h1>Can we free it?</h1>
+
+	<pre><code class="html">
+&lt;script>
+	foo = [];
+	span = document.createElement( 'span' );
+
+	span.addEventListener( 'click', () => {
+		console.log( foo );
+	} );
+
+	console.log( foo );
+&lt;/script>
+	</code></pre>
 
 	<aside class="notes">
 		<ul>
@@ -343,7 +436,95 @@
 </section>
 
 <section>
-	<h1></h1>
+	<h1>Garbage collector</h1>
+
+	<ul>
+		<li>GC pauses (it's synchronous)</li>
+		<li>Minor GC, major GC</li>
+		<li>Can be expensive</li>
+		<li>Differs between browsers, changes with time</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>it's synchronous</li>
+			<li>young generation, old generation</li>
+			<li>those pauses can be noticeable (usually are when talking about animations/games)</li>
+			<li>different implementations (and change with time)</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>When does memory leak?</h1>
+
+	<ul>
+		<li class="fragment">leaked globals</li>
+		<li class="fragment">globals referring to your objects</li>
+		<li class="fragment">listeners on globals (and objects referenced by globals)</li>
+		<li class="fragment">timeouts/intervals</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>and so on...</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Demo time!</h1>
+
+	<ul>
+		<li><a href="http://127.0.0.1:8080/samples/test-memory-1.html">Globals</a></li>
+		<li><a href="http://127.0.0.1:8080/samples/test-memory-2.html">Listeners</a></li>
+		<li><a href="http://127.0.0.1:8080/samples/test-memory-3.html">Timeouts</a></li>
+		<li><a href="http://127.0.0.1:8080/samples/test-memory-4.html">DOM nodes</a></li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>tools: memory tab, heap, allocation timeline, allocation sampling, performance monitor, performance tab</li>
+			<li>look for references to your source code</li>
+			<li>look for Detached*</li>
+			<li>look for (closure)</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Anecdote</h1>
+
+	<pre><code class="js">
+class MyApp {
+	destroy() {
+		// Deallocating memory...
+		this.foo = null;
+		this.bar = null;
+		this.boom = null;
+	}
+}
+	</code></pre>
+
+	<aside class="notes">
+		<ul>
+			<li>by a seasoned developer</li>
+			<li>should not be needed</li>
+			<li>may actually make finding issues harder</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Let's fix <a href="http://127.0.0.1:8080/">Toby</a>!</h1>
+
+	<p>Test:</p>
+
+	<ul>
+		<li>Scrolling</li>
+		<li>Using and destroying the app</li>
+		<li>Init & destroy</li>
+	</ul>
 
 	<aside class="notes">
 		<ul>
@@ -353,7 +534,32 @@
 </section>
 
 <section>
-	<h1></h1>
+	<h1>Runtime performance</h1>
+
+	<ul>
+		<li>Scripting</li>
+		<li>Styles, layout</li>
+		<li>Painting</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>the scope is huge</li>
+			<li>we'll cover very briefly the most common (in my experience) issues and techniques</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Your goal</h1>
+
+	<ul>
+		<li>responsive and smooth experience</li>
+		<li class="fragment">ideally 60FPS</li>
+		<li class="fragment">1000ms / 60 = 16.ms per frame</li>
+		<li class="fragment">script + styles + layout + paint</li>
+		<li class="fragment"><a href="https://ckeditor.com/ckeditor-5/demo/">but it's not a rule</a></li>
+	</ul>
 
 	<aside class="notes">
 		<ul>
@@ -363,7 +569,36 @@
 </section>
 
 <section>
-	<h1></h1>
+	<h1>Techniques, issues and mechanisms</h1>
+
+	<h2>Memory</h2>
+
+	<ul>
+		<li>Avoid major GC pauses</li>
+		<li>Less allocations</li>
+		<li>Recycle objects</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>https://stackoverflow.com/questions/18364175/best-practices-for-reducing-garbage-collector-activity-in-javascript</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Techniques, issues and mechanisms</h1>
+
+	<h2>JavaScript</h2>
+
+	<ul>
+		<li>JIT (avoid deopts)</li>
+		<li>event loop</li>
+		<li>Web Workers</li>
+		<li>Cache / memoization</li>
+		<li>RegExp can be super slow (e.g. <a href="https://www.regular-expressions.info/catastrophic.html">catastrophic backtracing</a>, non-capturing groups)</li>
+		<li>You can benchmark your code, but keep it realistic</li>
+	</ul>
 
 	<aside class="notes">
 		<ul>
@@ -373,7 +608,73 @@
 </section>
 
 <section>
-	<h1></h1>
+	<h1>Techniques, issues and mechanisms</h1>
+
+	<h2>DOM</h2>
+
+	<ul>
+		<li>Avoid layout trashing</li>
+		<li>DocumentFragments</li>
+		<li>Batch DOM changes</li>
+		<li>Avoid frequent DOM access</li>
+		<li>Use less elements (keep DOM clean) and listeners (e.g. via event delegation)</li>
+		<li>Recycle elements</li>
+		<li>Clone elements</li>
+		<li>Avoid pitfalls like setting <code>innerHTML</code></li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>https://github.com/wilsonpage/fastdom</li>
+			<li>https://gist.github.com/paulirish/5d52fb081b3570c81e3a</li>
+		</ul>
+	</aside>
+</section>
+
+
+<section>
+	<h1>Techniques, issues and mechanisms</h1>
+
+	<h2>Keep it smooth</h2>
+
+	<ul>
+		<li>Aim for short sync chunks</li>
+		<li>Reduce paint time – promote changing things to layers</li>
+		<li>Reduce layer management time (updating layer tree and compositing layers)</li>
+		<li><code>requestAnimationFrame()</code></li>
+		<li>Split long chunks with timeouts or <abbr title="requestAnimationFrame">rAF</abbr></li>
+		<li>Delay non-critical stuff (sync -> async execution)</li>
+		<li>Do stuff less often – <a href="https://css-tricks.com/debouncing-throttling-explained-examples/">throttling, debouncing</a></li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>https://www.html5rocks.com/en/tutorials/speed/layers/</li>
+			<li>https://developers.google.com/web/fundamentals/performance/rendering/</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Demo time!</h1>
+
+	<ul>
+		<li><a href="http://127.0.0.1:8080/samples/test-performance-1.html">Profiling rendering</a></li>
+		<li><a href="http://127.0.0.1:8080/samples/test-performance-2.html">CPU hogging, JIT, deopts</a></li>
+		<li><a href="http://127.0.0.1:8080/samples/test-performance-3.html">setTimeout vs rAF</a></li>
+		<li><a href="http://127.0.0.1:8080/samples/test-performance-4.html">GS pauses</a></li>
+		<li><a href="http://127.0.0.1:8080/samples/test-performance-5.html">layout trashing</a></li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>TODO: stuff in the profiler too show</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
+	<h1>Let's improve <a href="http://127.0.0.1:8080/">Toby</a>!</h1>
 
 	<aside class="notes">
 		<ul>
@@ -383,107 +684,7 @@
 </section>
 
 <section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
-
-	<aside class="notes">
-		<ul>
-			<li></li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1></h1>
+	<h1>Thank you!</h1>
 
 	<aside class="notes">
 		<ul>
