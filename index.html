@@ -94,11 +94,13 @@
 
 	<aside class="notes">
 		<ul>
-			<li>CKE project lead, first 5 years FE, then for 7 years only JS, but the last 4 not much coding.</li>
+			<li>who am I? started my career as a FE around 2007, then I joined CKE as a JS dev so for the last 7 years I'm doing only JS.</li>
+			<li>now I'm CKE project lead and don't do much coding myself.</li>
+			<li>that's about me</li>
 			<li>tell us a bit about yourself (experience? FE/JS? expectations?)</li>
 			<li>framework vs vanilla JS?</li>
 			<li>experience with profiling apps, memory leaks, GC, rendering, etc.?</li>
-			<li>which of you did know CKE before?</li>
+			<li>did you hear about CKE before the workshop?</li>
 		</ul>
 	</aside>
 </section>
@@ -106,12 +108,16 @@
 <section>
 	<h1>Agenda</h1>
 
-	<ol>
-		<li>When?</li>
-		<li>What?</li>
-		<li>How?</li>
+	<ol style="font-size: 90%">
+		<li>Optimizing
+			<ul>
+				<li>When?</li>
+				<li>What?</li>
+				<li>How?</li>
+			</ul>
+		</li>
 		<li>Memory leaks</li>
-		<li>Let's fix Toby!</li>
+		<li>Let's fix Toby's memory leaks!</li>
 		<li>
 			Runtime performance
 			<ol>
@@ -120,33 +126,16 @@
 				<li>Common techniques</li>
 			</ol>
 		</li>
-		<li>Let's improve Toby!</li>
+		<li>Let's improve Toby's performance!</li>
 	</ol>
 
 	<aside class="notes">
 		<ul>
 			<li>some theory first</li>
 			<li>in both cases, I'll first showcase the tools and then you'll play with them</li>
-		</ul>
-	</aside>
-</section>
-
-<section>
-	<h1>Runtime performance</h1>
-
-	<ul>
-		<li class="fragment">Run<span style="background: rgba(255,50,50,0.4); display:inline-block; width:1ex">&nbsp;</span>time vs load time</li>
-		<li class="fragment">Common aspects</li>
-		<li class="fragment">Animations / gamedev</li>
-	</ul>
-
-	<aside class="notes">
-		<ul>
-			<li>runtime vs load time</li>
-			<li>load time – initial UX, engagement, conversion, inclusiveness, SEO, etc.</li>
-			<li>load time – more about FE, assets, network, caching, etc.</li>
-			<li>there are common things between RT and LT perf</li>
-			<li>Animations / gamedev are about rendering – not my speciality</li>
+			<li>when should you optimize?</li>
+			<li>what should you optimize?</li>
+			<li>How should you optimize?</li>
 		</ul>
 	</aside>
 </section>
@@ -165,13 +154,33 @@
 </section>
 
 <section>
+	<h1>Runtime performance</h1>
+
+	<ul>
+		<li class="fragment">Load time and Run<span style="background: rgba(255,50,50,0.4); display:inline-block; width:1ex">&nbsp;</span>time </li>
+		<li class="fragment">Common aspects</li>
+		<li class="fragment">But this will be about runtime performance</li>
+	</ul>
+
+	<aside class="notes">
+		<ul>
+			<li>load time – initial UX, engagement, conversion, inclusiveness, SEO, etc.</li>
+			<li>load time – more about FE, assets, network, caching, etc.</li>
+			<li>runtime – everything that happens after load time</li>
+			<li>there are common things between RT and LT perf</li>
+			<li>Animations / gamedev are about rendering – not my specialty</li>
+		</ul>
+	</aside>
+</section>
+
+<section>
 	<h1>Load time performance</h1>
 
 	<ul>
 		<li><a href="https://developers.google.com/web/fundamentals/performance/user-centric-performance-metrics#user-centric_performance_metrics">User-centric performance metrics</a></li>
 		<li>First paint, First contentful paint, first meaningful pain, time to interactive, <a href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/analyzing-crp">Critical rendering path</a></li>
 		<li>Network optimization (HTTP2, minification)</li>
-		<li>PWA, AMP, etc.</li>
+		<li><abbr title="Progressive web app">PWA</abbr>, AMP, etc.</li>
 		<li>and a lot more...</li>
 
 	<aside class="notes">
@@ -181,9 +190,10 @@
 	</aside>
 </section>
 
-
 <section>
-	<h1>Runtime performance</h1>
+	<h1>Optimizing</h1>
+
+	<p>When? What? How?</p>
 
 	<aside class="notes">
 		<ul>
@@ -199,9 +209,8 @@
 
 	<aside class="notes">
 		<ul>
-			<li>when should you think about performance?</li>
 			<li>when there's a problem</li>
-			<li>should be quite obvious, but...</li>
+			<li>that should be quite obvious, but...</li>
 		</ul>
 	</aside>
 </section>
@@ -229,7 +238,7 @@
 
 	<aside class="notes">
 		<ul>
-			<li>so when we have a problem?</li>
+			<li>so when do you have a problem?</li>
 			<li>when the user sees/feels it</li>
 			<li>UX, responsiveness, smooth exp</li>
 			<li>be realistic! user's network/device/amount of data</li>
@@ -242,15 +251,15 @@
 	<h1><em>When</em> should you think about performance?</h1>
 
 	<ul>
-		<li class="fragment">when we have problems</li>
-		<li class="fragment">when we <strong>know</strong> we will have problems</li>
-		<li class="fragment">when we make architecture decisions</li>
+		<li class="fragment">post factum – when you have problems</li>
+		<li class="fragment">a priori – when you <strong>know</strong> you'll have problems</li>
+		<li class="fragment">a priori – when you make architecture decisions</li>
 		<li class="fragment">at all other times</li>
 	</ul>
 
 	<aside class="notes">
 		<ul>
-			<li>improving existing issues</li>
+			<li>when you need to fix existing issues</li>
 			<li>critical code, complex apps, loads of data</li>
 			<li>architecture == things that are hard to change</li>
 			<li>think != do</li>
@@ -285,8 +294,10 @@
 
 	<aside class="notes">
 		<ul>
+			<li>so, what's that?</li>
 			<li>if you cut 50% of a thing which takes 2s, you gain 1s</li>
 			<li>if you cut 50% of a thing which takes 0.2s, you gain 0.1s</li>
+			<li>listen to your intuition</li>
 		</ul>
 	</aside>
 </section>
@@ -295,10 +306,9 @@
 	<h1><em>How</em> <strong>not</strong> to optimize?</h1>
 
 	<ul>
-		<li class="fragment">Micro optimizations</li>
+		<li class="fragment">Unjustified micro optimizations</li>
 		<li class="fragment">When it's too risky (no tests? complexity?)</li>
 		<li class="fragment">Again, prematurely</li>
-		<li class="fragment">Again, too early</li>
 		<li class="fragment">Again, when there's no chance</li>
 	</ul>
 
@@ -317,22 +327,23 @@
 	<h1>So, <em>how</em> should you optimize?</h1>
 
 	<ul style="font-size: 75%">
-		<li>start locally, think broadly</li>
-		<li>know the code</li>
-		<li>find the root cause</li>
-		<li>avoid noise, keep your env tidy</li>
-		<li>follow your gut feeling</li>
-		<li>but verify your hypothesis (realistically!)</li>
-		<li>be creative</li>
-		<li>but avoid complexity</li>
-		<li>don't fixate on one thing</li>
-		<li>and know when to stop</li>
-		<li>bonus: question self-proclaimed experts</li>
+		<li class="fragment">start locally, think broadly</li>
+		<li class="fragment">know the code</li>
+		<li class="fragment">find the root cause</li>
+		<li class="fragment">avoid noise, keep your env tidy</li>
+		<li class="fragment">follow your gut feeling</li>
+		<li class="fragment">but verify your hypothesis (realistically!)</li>
+		<li class="fragment">be creative</li>
+		<li class="fragment">but avoid complexity</li>
+		<li class="fragment">don't fixate on one thing</li>
+		<li class="fragment">and know when to stop</li>
+		<li class="fragment">bonus: question self-proclaimed experts</li>
 	</ul>
 
 	<aside class="notes">
 		<ul>
-			<li>a couple of general remarks before we'll move to the practice session</li>
+			<li>finally, we get to how...</li>
+			<li>a couple of general remarks before we'll move to the practical session</li>
 		</ul>
 	</aside>
 </section>
@@ -366,6 +377,7 @@
 
 	<aside class="notes">
 		<ul>
+			<li>first, we need to understand how memory is managed in JS</li>
 			<li>note: in the past two object referencing each other were causing issues... should not be a problem any more but I still found this on MDN</li>
 		</ul>
 	</aside>
@@ -466,17 +478,17 @@
 
 	<ul>
 		<li>GC pauses (it's synchronous)</li>
-		<li>Minor GC, major GC</li>
+		<li>Minor GC, major GC pauses</li>
 		<li>Can be expensive</li>
 		<li>Differs between browsers, changes with time</li>
 	</ul>
 
 	<aside class="notes">
 		<ul>
-			<li>it's synchronous</li>
+			<li>it's synchronous, execution is paused</li>
 			<li>young generation, old generation</li>
 			<li>those pauses can be noticeable (usually are when talking about animations/games)</li>
-			<li>different implementations (and change with time)</li>
+			<li>browser devs push super hard – different implementations, complex heuristics (and change with time)</li>
 		</ul>
 	</aside>
 </section>
@@ -523,6 +535,8 @@
 
 	<pre><code class="js">
 class MyApp {
+	// ... lots of code here
+
 	destroy() {
 		// Deallocating memory...
 		this.foo = null;
