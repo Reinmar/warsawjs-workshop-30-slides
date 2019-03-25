@@ -66,7 +66,7 @@
 				position: absolute;
 				bottom: 0;
 				left: 0;
-				font-size: 0.5em;
+				font-size: 0.4em;
 				text-align: left;
 			}
 		</style>
@@ -83,7 +83,6 @@
 		<a href="https://twitter.com/reinmarpl">@reinmarpl</a>
 	</p>
 	<p class="practical-info">
-		wifi: ?<br>
 		slack: #workshop-30-1<br>
 		GH: <a href="https://github.com/Reinmar/warsawjs-workshop-30-spreadsheet">github.com/Reinmar/warsawjs-workshop-30-spreadsheet</a>
 	</p>
@@ -178,7 +177,7 @@
 
 	<ul>
 		<li><a href="https://developers.google.com/web/fundamentals/performance/user-centric-performance-metrics#user-centric_performance_metrics">User-centric performance metrics</a></li>
-		<li>First paint, First contentful paint, first meaningful pain, time to interactive, <a href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/analyzing-crp">Critical rendering path</a></li>
+		<li>First paint, First contentful paint, first meaningful pain, time to interactive, <a href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/analyzing-crp">critical rendering path</a></li>
 		<li>Network optimization (HTTP2, minification)</li>
 		<li><abbr title="Progressive web app">PWA</abbr>, AMP, etc.</li>
 		<li>and a lot more...</li>
@@ -378,6 +377,7 @@
 	<aside class="notes">
 		<ul>
 			<li>first, we need to understand how memory is managed in JS</li>
+			<li>https://blog.sessionstack.com/how-javascript-works-memory-management-how-to-handle-4-common-memory-leaks-3f28b94cfbec</li>
 			<li>note: in the past two object referencing each other were causing issues... should not be a problem any more but I still found this on MDN</li>
 		</ul>
 	</aside>
@@ -400,7 +400,7 @@
 
 	<aside class="notes">
 		<ul>
-			<li></li>
+			<li>yes, foo is not needed after console.log() is executed</li>
 		</ul>
 	</aside>
 </section>
@@ -422,7 +422,7 @@
 
 	<aside class="notes">
 		<ul>
-			<li></li>
+			<li>no, foo is used in a listener reachable from the GC root</li>
 		</ul>
 	</aside>
 </section>
@@ -445,7 +445,7 @@
 
 	<aside class="notes">
 		<ul>
-			<li></li>
+			<li>yes, both foo and span are local variables, so even though foo is used in a listener, this listener is not reachable from a GC root</li>
 		</ul>
 	</aside>
 </section>
@@ -468,7 +468,7 @@
 
 	<aside class="notes">
 		<ul>
-			<li></li>
+			<li>no, this is a bad code which creates two global variables (foo and span)</li>
 		</ul>
 	</aside>
 </section>
@@ -477,15 +477,17 @@
 	<h1>Garbage collector</h1>
 
 	<ul>
+		<li>Implemented by the browsers</li>
+		<li>Browsers make decisions when to run it</li>
 		<li>GC pauses (it's synchronous)</li>
-		<li>Minor GC, major GC pauses</li>
+		<li>Minor GC, major GC, DOM GC</li>
 		<li>Can be expensive</li>
 		<li>Differs between browsers, changes with time</li>
 	</ul>
 
 	<aside class="notes">
 		<ul>
-			<li>it's synchronous, execution is paused</li>
+			<li>it's synchronous, execution of your script is paused</li>
 			<li>young generation, old generation</li>
 			<li>those pauses can be noticeable (usually are when talking about animations/games)</li>
 			<li>browser devs push super hard – different implementations, complex heuristics (and change with time)</li>
@@ -514,10 +516,10 @@
 	<h1>Demo time!</h1>
 
 	<ul>
-		<li><a href="http://127.0.0.1:8080/samples/test-memory-1.html">Globals</a></li>
-		<li><a href="http://127.0.0.1:8080/samples/test-memory-2.html">Listeners</a></li>
-		<li><a href="http://127.0.0.1:8080/samples/test-memory-3.html">Timeouts</a></li>
-		<li><a href="http://127.0.0.1:8080/samples/test-memory-4.html">DOM nodes</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-memory-1.html">Globals</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-memory-2.html">Listeners</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-memory-3.html">Timeouts</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-memory-4.html">DOM nodes</a></li>
 	</ul>
 
 	<aside class="notes">
@@ -549,14 +551,14 @@ class MyApp {
 	<aside class="notes">
 		<ul>
 			<li>by a seasoned developer</li>
-			<li>should not be needed</li>
+			<li>should not be needed (because if an instance of MyApp is correctly unreferenced, then those properties will not be retained)</li>
 			<li>may actually make finding issues harder</li>
 		</ul>
 	</aside>
 </section>
 
 <section>
-	<h1>Let's fix <a href="http://127.0.0.1:8080/">Toby</a>!</h1>
+	<h1>Let's fix <a href="/warsawjs-workshop-30-spreadsheet/">Toby</a>!</h1>
 
 	<p>Test:</p>
 
@@ -596,7 +598,7 @@ class MyApp {
 	<ul>
 		<li>responsive and smooth experience</li>
 		<li class="fragment">ideally 60FPS</li>
-		<li class="fragment">1000ms / 60 = 16.ms per frame</li>
+		<li class="fragment">1000ms / 60 = 16.6ms per frame</li>
 		<li class="fragment">script + styles + layout + paint</li>
 		<li class="fragment"><a href="https://ckeditor.com/ckeditor-5/demo/">but it's not a rule</a></li>
 	</ul>
@@ -630,9 +632,9 @@ class MyApp {
 
 	<ul style="font-size: 90%">
 		<li>JS is single-threaded (the rest not necessarily)</li>
-		<li>event loop</li>
-		<li><abbr title="Just in Time">JIT</abbr> compilation – avoid deopts</li>
-		<li>Cache / memoization</li>
+		<li><a href="https://www.youtube.com/watch?v=8aGhZQkoFbQ">event loop</a></li>
+		<li><a href="https://www.youtube.com/watch?v=p-iiEDtpy6I"><abbr title="Just in Time">JIT</abbr> compilation</a> – avoid deopts</li>
+		<li>Cache / <a href="https://en.wikipedia.org/wiki/Memoization">memoization</a></li>
 		<li>Web Workers</li>
 		<li>RegExp can be super slow (e.g. <a href="https://www.regular-expressions.info/catastrophic.html">catastrophic backtracing</a>, non-capturing groups)</li>
 		<li>You can benchmark your code, but keep it realistic</li>
@@ -649,10 +651,10 @@ class MyApp {
 	<h1>DOM</h1>
 
 	<ul style="font-size: 90%">
-		<li>Avoid layout trashing</li>
+		<li><a href="https://gist.github.com/paulirish/5d52fb081b3570c81e3a">Avoid layout trashing</a></li>
 		<li>Batch DOM changes</li>
-		<li>DocumentFragments</li>
-		<li>Use less elements (keep DOM clean) and listeners (e.g. via event delegation)</li>
+		<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment">DocumentFragment</a>s</li>
+		<li>Use less elements (keep DOM clean) and listeners (e.g. via <a href="https://davidwalsh.name/event-delegate">event delegation</a>)</li>
 		<li>Recycle elements</li>
 		<li>Clone elements</li>
 		<li>Avoid pitfalls like setting <code>innerHTML</code></li>
@@ -661,7 +663,8 @@ class MyApp {
 	<aside class="notes">
 		<ul>
 			<li>https://github.com/wilsonpage/fastdom</li>
-			<li>https://gist.github.com/paulirish/5d52fb081b3570c81e3a</li>
+			<li>https://stackoverflow.com/questions/14203196/does-using-a-document-fragment-really-improve-performance – old but still true</li>
+			<li>innerText and textContent</li>
 		</ul>
 	</aside>
 </section>
@@ -699,6 +702,10 @@ class MyApp {
 		<ul>
 			<li>https://www.html5rocks.com/en/tutorials/speed/layers/</li>
 			<li>https://developers.google.com/web/fundamentals/performance/rendering/</li>
+			<li>https://css-tricks.com/the-difference-between-throttling-and-debouncing/</li>
+			<li>https://stackoverflow.com/questions/38709923/why-is-requestanimationframe-better-than-setinterval-or-settimeout</li>
+			<li>https://medium.com/@paul_irish/requestanimationframe-scheduling-for-nerds-9c57f7438ef4</li>
+			<li>https://css-tricks.com/myth-busting-css-animations-vs-javascript/</li>
 		</ul>
 	</aside>
 </section>
@@ -707,11 +714,11 @@ class MyApp {
 	<h1>Demo time!</h1>
 
 	<ul>
-		<li><a href="http://127.0.0.1:8080/samples/test-performance-1.html">Profiling rendering</a></li>
-		<li><a href="http://127.0.0.1:8080/samples/test-performance-2.html">CPU hogging, JIT, deopts</a></li>
-		<li><a href="http://127.0.0.1:8080/samples/test-performance-3.html">setTimeout vs rAF</a></li>
-		<li><a href="http://127.0.0.1:8080/samples/test-performance-4.html">GS pauses</a></li>
-		<li><a href="http://127.0.0.1:8080/samples/test-performance-5.html">layout trashing</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-performance-1.html">Profiling rendering</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-performance-2.html">CPU hogging, JIT, deopts</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-performance-3.html">setTimeout vs rAF</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-performance-4.html">GS pauses</a></li>
+		<li><a href="/warsawjs-workshop-30-spreadsheet/samples/test-performance-5.html">layout trashing</a></li>
 	</ul>
 
 	<aside class="notes">
@@ -722,11 +729,28 @@ class MyApp {
 </section>
 
 <section>
-	<h1>Let's improve <a href="http://127.0.0.1:8080/">Toby</a>!</h1>
+	<h1>Let's improve <a href="/warsawjs-workshop-30-spreadsheet/">Toby</a>!</h1>
+
+	<p style="font-size: 70%; font-style: italic">Note: You can append #0, #1, #2 to the URL to get different data sets. The #* below indicate in which sample which technique is best visible.</p>
+
+	<ul style="font-size: 70%">
+		<li>cache/memoization #2</li>
+		<li>web workers #2</li>
+		<li>delay non-critical stuff #2</li>
+		<li>batch DOM changes #1</li>
+		<li>clone elements #1</li>
+		<li>recycle elements #1</li>
+		<li>avoid pitfalls like setting innerHTML #*</li>
+		<li>requestAnimationFrame #*</li>
+		<li>throttling #*</li>
+	</ul>
 
 	<aside class="notes">
 		<ul>
-			<li></li>
+			<li>#0 – default data set – 38 columns, no formulas</li>
+			<li>#1 – huge data set – 380 columns, no formulas, note: we show only the first 38 columns, while the other 342 are hidden via CSS (but still present in the DOM)</li>
+			<li>#2 – less columns, two complex formulas</li>
+			<li>Toby implements an infinite scroller – read more about this technique on https://developers.google.com/web/updates/2016/07/infinite-scroller</li>
 		</ul>
 	</aside>
 </section>
